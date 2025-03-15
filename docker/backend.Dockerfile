@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine
+FROM golang:1.23-alpine
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk add --no-cache git
 
 # Copy go.mod and go.sum
-COPY internal/go.mod internal/go.sum* ./
+COPY go.mod go.sum* ./
 
 # Download dependencies
 RUN go mod download

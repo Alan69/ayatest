@@ -10,7 +10,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/Alan69/ayatest/internal/database"
 	"github.com/Alan69/ayatest/internal/events"
-	"github.com/Alan69/ayatest/internal/graph"
+	// "github.com/Alan69/ayatest/internal/graph"
 	"github.com/Alan69/ayatest/internal/graph/resolvers"
 	"github.com/Alan69/ayatest/internal/workflows"
 	"github.com/joho/godotenv"
