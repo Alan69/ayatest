@@ -1,0 +1,224 @@
+scalar Time
+scalar UUID
+
+enum ProductType {
+  STUDENT
+  TEACHER
+}
+
+type Product {
+  id: UUID!
+  title: String!
+  description: String
+  sum: Int
+  score: Int
+  time: Int
+  subjectLimit: Int
+  productType: ProductType!
+  dateCreated: Time!
+  tests: [Test!]
+}
+
+type Test {
+  id: UUID!
+  title: String!
+  numberOfQuestions: Int
+  time: Int
+  score: Int
+  product: Product!
+  grade: Int
+  dateCreated: Time!
+  isRequired: Boolean!
+  questions: [Question!]
+}
+
+type Source {
+  id: UUID!
+  text: String!
+}
+
+type Question {
+  id: UUID!
+  test: Test!
+  text: String
+  text2: String
+  text3: String
+  imgPath: String
+  taskType: Int
+  level: Int
+  status: Int
+  category: String
+  subcategory: String
+  theme: String
+  subtheme: String
+  target: String
+  source: String
+  sourceText: Source
+  detailId: Int
+  lngId: Int
+  lngTitle: String
+  subjectId: Int
+  subjectTitle: String
+  classNumber: Int
+  options: [Option!]!
+}
+
+type Option {
+  id: UUID!
+  question: Question!
+  text: String!
+  imgPath: String
+  isCorrect: Boolean!
+}
+
+type User {
+  id: UUID!
+  username: String!
+  email: String!
+  completedTests: [CompletedTest!]
+}
+
+type CompletedTest {
+  id: UUID!
+  user: User!
+  product: Product!
+  tests: [Test!]!
+  completedDate: Time!
+  startTestTime: Time
+  timeSpent: Int
+  completedQuestions: [CompletedQuestion!]!
+}
+
+type CompletedQuestion {
+  id: UUID!
+  completedTest: CompletedTest!
+  test: Test!
+  question: Question
+  selectedOptions: [Option!]!
+}
+
+input ProductInput {
+  title: String!
+  description: String
+  sum: Int
+  score: Int
+  time: Int
+  subjectLimit: Int
+  productType: ProductType
+}
+
+input TestInput {
+  title: String!
+  numberOfQuestions: Int
+  time: Int
+  score: Int
+  productId: UUID!
+  grade: Int
+  isRequired: Boolean
+}
+
+input SourceInput {
+  text: String!
+}
+
+input QuestionInput {
+  testId: UUID!
+  text: String
+  text2: String
+  text3: String
+  imgPath: String
+  taskType: Int
+  level: Int
+  status: Int
+  category: String
+  subcategory: String
+  theme: String
+  subtheme: String
+  target: String
+  source: String
+  sourceTextId: UUID
+  detailId: Int
+  lngId: Int
+  lngTitle: String
+  subjectId: Int
+  subjectTitle: String
+  classNumber: Int
+}
+
+input OptionInput {
+  questionId: UUID!
+  text: String!
+  imgPath: String
+  isCorrect: Boolean!
+}
+
+input UserInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input StartTestInput {
+  userId: UUID!
+  productId: UUID!
+  testIds: [UUID!]!
+}
+
+input AnswerQuestionInput {
+  completedTestId: UUID!
+  testId: UUID!
+  questionId: UUID!
+  selectedOptionIds: [UUID!]!
+}
+
+input CompleteTestInput {
+  completedTestId: UUID!
+  timeSpent: Int!
+}
+
+type Query {
+  products: [Product!]!
+  product(id: UUID!): Product
+  tests: [Test!]!
+  test(id: UUID!): Test
+  questions(testId: UUID!): [Question!]!
+  question(id: UUID!): Question
+  user(id: UUID!): User
+  completedTests(userId: UUID!): [CompletedTest!]!
+  completedTest(id: UUID!): CompletedTest
+}
+
+type Mutation {
+  createProduct(input: ProductInput!): Product!
+  updateProduct(id: UUID!, input: ProductInput!): Product!
+  deleteProduct(id: UUID!): Boolean!
+
+  createTest(input: TestInput!): Test!
+  updateTest(id: UUID!, input: TestInput!): Test!
+  deleteTest(id: UUID!): Boolean!
+
+  createSource(input: SourceInput!): Source!
+  updateSource(id: UUID!, input: SourceInput!): Source!
+  deleteSource(id: UUID!): Boolean!
+
+  createQuestion(input: QuestionInput!): Question!
+  updateQuestion(id: UUID!, input: QuestionInput!): Question!
+  deleteQuestion(id: UUID!): Boolean!
+
+  createOption(input: OptionInput!): Option!
+  updateOption(id: UUID!, input: OptionInput!): Option!
+  deleteOption(id: UUID!): Boolean!
+
+  createUser(input: UserInput!): User!
+  login(username: String!, password: String!): String!
+
+  startTest(input: StartTestInput!): CompletedTest!
+  answerQuestion(input: AnswerQuestionInput!): CompletedQuestion!
+  completeTest(input: CompleteTestInput!): CompletedTest!
+}
+
+type Subscription {
+  testStarted(userId: UUID!): CompletedTest!
+  questionAnswered(completedTestId: UUID!): CompletedQuestion!
+  testCompleted(userId: UUID!): CompletedTest!
+} 

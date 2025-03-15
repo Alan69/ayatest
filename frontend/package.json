@@ -1,0 +1,28 @@
+{
+  "name": "ayatest-frontend",
+  "version": "0.1.0",
+  "description": "Frontend for AyaTest application",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@solid-primitives/storage": "^2.1.1",
+    "@solidjs/router": "^0.9.1",
+    "@urql/core": "^4.2.0",
+    "@urql/exchange-auth": "^2.1.6",
+    "graphql": "^16.8.1",
+    "jwt-decode": "^4.0.0",
+    "solid-js": "^1.8.5",
+    "solid-urql": "^0.7.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0",
+    "vite-plugin-solid": "^2.7.2"
+  }
+} 
