@@ -1,6 +1,6 @@
 import { createSignal, Show } from 'solid-js';
 import { useNavigate, useLocation } from '@solidjs/router';
-import { useAuth } from '../App';
+import { useAuth } from '../hooks/useAuth';
 
 function Login() {
   const auth = useAuth();

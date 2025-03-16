@@ -85,7 +85,7 @@ func (r *mutationResolver) UpdateTest(ctx context.Context, id uuid.UUID, input m
 	}
 
 	// Publish event to NATS
-	if err := r.EventPublisher.PublishTestUpdated(test); err != nil {
+	if err := r.EventPublisher.PublishTestUpdated(&test); err != nil {
 		// Log the error but don't fail the request
 		r.Logger.Error("Failed to publish test updated event", "error", err)
 	}
@@ -107,4 +107,4 @@ func (r *mutationResolver) DeleteTest(ctx context.Context, id uuid.UUID) (bool, 
 	}
 
 	return true, nil
-} 
+}

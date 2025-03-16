@@ -1,6 +1,6 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { useQuery } from 'solid-urql';
+import { createQuery } from '@urql/solid';
 import { useAuth } from '../App';
 import { GET_COMPLETED_TESTS } from '../api/queries';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -10,18 +10,18 @@ function CompletedTests() {
   const auth = useAuth();
   const [searchTerm, setSearchTerm] = createSignal('');
   
-  const [completedTestsQuery] = useQuery({
+  const [completedTests, completedTestsState] = createQuery({
     query: GET_COMPLETED_TESTS,
     variables: { userId: auth.user.id }
   });
   
   const filteredTests = () => {
-    if (!completedTestsQuery.data?.completedTests) return [];
+    if (!completedTests.data?.completedTests) return [];
     
     const term = searchTerm().toLowerCase();
-    if (!term) return completedTestsQuery.data.completedTests;
+    if (!term) return completedTests.data.completedTests;
     
-    return completedTestsQuery.data.completedTests.filter(test => 
+    return completedTests.data.completedTests.filter(test => 
       test.product.title.toLowerCase().includes(term)
     );
   };
@@ -55,7 +55,7 @@ function CompletedTests() {
         </div>
       </div>
       
-      <Show when={!completedTestsQuery.fetching} fallback={<LoadingSpinner />}>
+      <Show when={!completedTests.fetching} fallback={<LoadingSpinner />}>
         <Show when={filteredTests().length > 0} fallback={
           <div class="bg-white shadow overflow-hidden sm:rounded-lg">
             <div class="px-4 py-5 sm:px-6 text-center">

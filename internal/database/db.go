@@ -53,4 +53,4 @@ func Migrate() {
 	}
 
 	log.Println("Database migration completed")
-} 
+}

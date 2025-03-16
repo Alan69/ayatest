@@ -1,37 +1,39 @@
 import { createSignal, createEffect, Show } from 'solid-js';
-import { useNavigate } from '@solidjs/router';
-import { useQuery } from 'solid-urql';
+import { useNavigate, Link } from '@solidjs/router';
+import { createQuery } from '@urql/solid';
 import { useAuth } from '../App';
 import { GET_COMPLETED_TESTS } from '../api/queries';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function Dashboard() {
-  const auth = useAuth();
   const navigate = useNavigate();
+  const auth = useAuth();
+
   const [stats, setStats] = createSignal({
     totalTests: 0,
     averageScore: 0,
     testsThisMonth: 0
   });
 
-  const [completedTestsQuery] = useQuery({
+  const [completedTests, completedTestsState] = createQuery({
     query: GET_COMPLETED_TESTS,
     variables: { userId: auth.user.id },
   });
 
   createEffect(() => {
-    if (completedTestsQuery.data) {
-      const tests = completedTestsQuery.data.completedTests || [];
+    if (completedTests.data) {
+      const tests = completedTests.data.completedTests || [];
       
       // Calculate stats
-      const totalTests = tests.length;
-      
-      // For this example, we'll just set some placeholder stats
-      // In a real app, you would calculate these from the actual test data
       setStats({
-        totalTests,
-        averageScore: totalTests > 0 ? Math.floor(Math.random() * 40) + 60 : 0, // Random score between 60-100
-        testsThisMonth: Math.min(totalTests, Math.floor(Math.random() * 5) + 1) // Random recent tests
+        totalTests: tests.length,
+        averageScore: tests.length > 0 ? 85 : 0, // Placeholder average score
+        testsThisMonth: tests.filter(test => {
+          const testDate = new Date(test.completedDate);
+          const now = new Date();
+          return testDate.getMonth() === now.getMonth() && 
+                 testDate.getFullYear() === now.getFullYear();
+        }).length
       });
     }
   });
@@ -111,9 +113,9 @@ function Dashboard() {
           </h3>
         </div>
         
-        <Show when={!completedTestsQuery.fetching} fallback={<LoadingSpinner />}>
+        <Show when={!completedTests.fetching} fallback={<LoadingSpinner />}>
           <Show 
-            when={completedTestsQuery.data?.completedTests?.length > 0} 
+            when={completedTests.data?.completedTests?.length > 0} 
             fallback={
               <div class="px-4 py-5 text-center text-gray-500">
                 <p>You haven't completed any tests yet.</p>
@@ -127,7 +129,7 @@ function Dashboard() {
             }
           >
             <ul class="divide-y divide-gray-200">
-              {completedTestsQuery.data?.completedTests?.slice(0, 5).map((test) => (
+              {completedTests.data?.completedTests?.slice(0, 5).map((test) => (
                 <li>
                   <a href={`/results/${test.id}`} class="block hover:bg-gray-50">
                     <div class="px-4 py-4 sm:px-6">

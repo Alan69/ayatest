@@ -1,6 +1,6 @@
 import { createSignal, createEffect, onCleanup, Show } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
-import { useQuery } from 'solid-urql';
+import { createQuery } from '@urql/solid';
 import { useAuth, useTest } from '../App';
 import { GET_QUESTIONS, GET_TEST } from '../api/queries';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -23,14 +23,14 @@ function TestTaking() {
   };
   
   // Query for the current test details
-  const [testQuery] = useQuery({
+  const [testQuery] = createQuery({
     query: GET_TEST,
     variables: { id: currentTestId() },
     pause: !currentTestId()
   });
   
   // Query for questions in the current test
-  const [questionsQuery] = useQuery({
+  const [questionsQuery] = createQuery({
     query: GET_QUESTIONS,
     variables: { testId: currentTestId() },
     pause: !currentTestId()

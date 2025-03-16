@@ -1,14 +1,15 @@
-import { createSignal, createStore } from 'solid-js/store';
-import { useMutation, useQuery } from 'solid-urql';
+import { createSignal } from 'solid-js';
+import { createStore } from 'solid-js/store';
+import { createMutation, createQuery } from '@urql/solid';
 import { START_TEST, ANSWER_QUESTION, COMPLETE_TEST } from '../api/mutations';
 import { GET_QUESTIONS } from '../api/queries';
 import { useNavigate } from '@solidjs/router';
 
 export const createTestStore = () => {
   const navigate = useNavigate();
-  const [startTestMutation, startTestMutate] = useMutation(START_TEST);
-  const [answerQuestionMutation, answerQuestionMutate] = useMutation(ANSWER_QUESTION);
-  const [completeTestMutation, completeTestMutate] = useMutation(COMPLETE_TEST);
+  const [startTestResult, startTestMutate] = createMutation(START_TEST);
+  const [answerQuestionResult, answerQuestionMutate] = createMutation(ANSWER_QUESTION);
+  const [completeTestResult, completeTestMutate] = createMutation(COMPLETE_TEST);
   
   const [activeTest, setActiveTest] = createStore({
     id: null,
@@ -103,7 +104,7 @@ export const createTestStore = () => {
   
   const nextQuestion = () => {
     const currentTest = activeTest.testIds[activeTest.currentTestIndex];
-    const [questionsResult] = useQuery({
+    const [questionsResult] = createQuery({
       query: GET_QUESTIONS,
       variables: { testId: currentTest }
     });
@@ -139,7 +140,7 @@ export const createTestStore = () => {
     } else if (activeTest.currentTestIndex > 0) {
       // Move to the last question of the previous test
       const previousTestId = activeTest.testIds[activeTest.currentTestIndex - 1];
-      const [questionsResult] = useQuery({
+      const [questionsResult] = createQuery({
         query: GET_QUESTIONS,
         variables: { testId: previousTestId }
       });

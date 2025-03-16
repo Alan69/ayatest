@@ -142,4 +142,4 @@ func NotifyTestResultsActivity(ctx context.Context, completedTestID uuid.UUID, r
 
 	sugar.Infow("Test results notified", "completedTestID", completedTestID, "score", result.Score)
 	return nil
-} 
+}

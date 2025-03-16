@@ -1,11 +1,11 @@
 import { render } from 'solid-js/web';
 import { Router } from '@solidjs/router';
-import { Provider } from 'solid-urql';
-import { createClient } from './api/client';
+import { Provider } from '@urql/solid';
+import { createClient as createUrqlClient } from './api/client';
 import App from './App';
 import './index.css';
 
-const client = createClient();
+const client = createUrqlClient();
 
 render(
   () => (

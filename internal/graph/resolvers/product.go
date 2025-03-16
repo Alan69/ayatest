@@ -88,7 +88,7 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, id uuid.UUID, inpu
 	}
 
 	// Publish event to NATS
-	if err := r.EventPublisher.PublishProductUpdated(product); err != nil {
+	if err := r.EventPublisher.PublishProductUpdated(&product); err != nil {
 		// Log the error but don't fail the request
 		r.Logger.Error("Failed to publish product updated event", "error", err)
 	}
@@ -110,4 +110,4 @@ func (r *mutationResolver) DeleteProduct(ctx context.Context, id uuid.UUID) (boo
 	}
 
 	return true, nil
-} 
+}

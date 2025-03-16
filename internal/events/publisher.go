@@ -11,15 +11,15 @@ import (
 
 // Event types
 const (
-	EventProductCreated    = "product.created"
-	EventProductUpdated    = "product.updated"
-	EventProductDeleted    = "product.deleted"
-	EventTestCreated       = "test.created"
-	EventTestUpdated       = "test.updated"
-	EventTestDeleted       = "test.deleted"
-	EventTestStarted       = "test.started"
-	EventQuestionAnswered  = "question.answered"
-	EventTestCompleted     = "test.completed"
+	EventProductCreated   = "product.created"
+	EventProductUpdated   = "product.updated"
+	EventProductDeleted   = "product.deleted"
+	EventTestCreated      = "test.created"
+	EventTestUpdated      = "test.updated"
+	EventTestDeleted      = "test.deleted"
+	EventTestStarted      = "test.started"
+	EventQuestionAnswered = "question.answered"
+	EventTestCompleted    = "test.completed"
 )
 
 // Publisher defines the interface for publishing events
@@ -128,4 +128,4 @@ func (p *NATSPublisher) PublishTestCompleted(completedTest *models.CompletedTest
 		return err
 	}
 	return p.nc.Publish(EventTestCompleted, data)
-} 
+}

@@ -55,6 +55,7 @@ services:
       - NATS_URL=nats://nats:4222
       - TEMPORAL_URL=temporal:7233
       - PORT=8080
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_change_in_production}
     depends_on:
       postgres:
         condition: service_healthy
@@ -97,6 +98,23 @@ services:
     depends_on:
       - nginx
     restart: always
+
+  seed:
+    build:
+      context: .
+      dockerfile: docker/seed.Dockerfile
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-ayatest}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    restart: "no"
 
 volumes:
   postgres_data:

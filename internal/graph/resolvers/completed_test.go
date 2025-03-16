@@ -21,7 +21,7 @@ func (r *queryResolver) CompletedTests(ctx context.Context, userID uuid.UUID) ([
 	return completedTests, nil
 }
 
-// GetCompletedTest returns a completed test by ID
+// CompletedTest returns a completed test by ID
 func (r *queryResolver) CompletedTest(ctx context.Context, id uuid.UUID) (*models.CompletedTest, error) {
 	var completedTest models.CompletedTest
 	result := database.DB.First(&completedTest, "id = ?", id)
@@ -197,4 +197,4 @@ func (r *mutationResolver) CompleteTest(ctx context.Context, input models.Comple
 	}
 
 	return &completedTest, nil
-} 
+}

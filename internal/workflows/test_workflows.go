@@ -3,8 +3,8 @@ package workflows
 import (
 	"time"
 
-	"github.com/Alan69/ayatest/internal/models"
 	"github.com/google/uuid"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 )
 
@@ -65,7 +65,7 @@ func TestTimerWorkflow(ctx workflow.Context, params TestTimerParams) error {
 		// Execute activity to auto-complete the test
 		activityOptions := workflow.ActivityOptions{
 			StartToCloseTimeout: 10 * time.Second,
-			RetryPolicy: &workflow.RetryPolicy{
+			RetryPolicy: &temporal.RetryPolicy{
 				InitialInterval:    time.Second,
 				BackoffCoefficient: 2.0,
 				MaximumInterval:    time.Minute,
@@ -91,7 +91,7 @@ func TestTimerWorkflow(ctx workflow.Context, params TestTimerParams) error {
 		// Execute activity to send a reminder
 		activityOptions := workflow.ActivityOptions{
 			StartToCloseTimeout: 10 * time.Second,
-			RetryPolicy: &workflow.RetryPolicy{
+			RetryPolicy: &temporal.RetryPolicy{
 				InitialInterval:    time.Second,
 				BackoffCoefficient: 2.0,
 				MaximumInterval:    time.Minute,
@@ -130,7 +130,7 @@ func AutoCheckTestWorkflow(ctx workflow.Context, params AutoCheckTestParams) err
 	// Execute activity to check the test
 	activityOptions := workflow.ActivityOptions{
 		StartToCloseTimeout: 30 * time.Second,
-		RetryPolicy: &workflow.RetryPolicy{
+		RetryPolicy: &temporal.RetryPolicy{
 			InitialInterval:    time.Second,
 			BackoffCoefficient: 2.0,
 			MaximumInterval:    time.Minute,
@@ -138,7 +138,7 @@ func AutoCheckTestWorkflow(ctx workflow.Context, params AutoCheckTestParams) err
 		},
 	}
 	ctx = workflow.WithActivityOptions(ctx, activityOptions)
-	var result models.TestResult
+	var result TestResult
 	err := workflow.ExecuteActivity(ctx, CheckTestActivity, params.CompletedTestID).Get(ctx, &result)
 	if err != nil {
 		logger.Error("Failed to check test", "error", err)
@@ -153,4 +153,4 @@ func AutoCheckTestWorkflow(ctx workflow.Context, params AutoCheckTestParams) err
 	}
 
 	return nil
-} 
+}

@@ -2,7 +2,7 @@ import { Navigate, Outlet } from '@solidjs/router';
 import { useAuth } from '../hooks/useAuth';
 import { Show } from 'solid-js';
 
-function ProtectedRoute() {
+function AdminRoute() {
   const auth = useAuth();
   
   return (
@@ -11,7 +11,7 @@ function ProtectedRoute() {
       fallback={<div class="flex justify-center items-center h-screen">Loading...</div>}
     >
       <Show 
-        when={auth.isAuthenticated()} 
+        when={auth.isAuthenticated() && auth.user()?.role === 'ADMIN'} 
         fallback={<Navigate href="/login" />}
       >
         <Outlet />
@@ -20,4 +20,4 @@ function ProtectedRoute() {
   );
 }
 
-export default ProtectedRoute; 
+export default AdminRoute; 

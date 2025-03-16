@@ -1,10 +1,11 @@
 import { lazy, createContext, useContext } from 'solid-js';
 import { Routes, Route, Navigate } from '@solidjs/router';
-import { createAuthStore } from './store/auth';
+import { AuthProvider } from './hooks/useAuth';
 import { createTestStore } from './store/test';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -17,22 +18,20 @@ const TestSelection = lazy(() => import('./pages/TestSelection'));
 const TestTaking = lazy(() => import('./pages/TestTaking'));
 const TestResults = lazy(() => import('./pages/TestResults'));
 const CompletedTests = lazy(() => import('./pages/CompletedTests'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
-// Create contexts
-export const AuthContext = createContext();
+// Create test context
 export const TestContext = createContext();
 
-// Custom hooks to use the contexts
-export const useAuth = () => useContext(AuthContext);
+// Custom hook to use the test context
 export const useTest = () => useContext(TestContext);
 
 function App() {
-  const auth = createAuthStore();
   const test = createTestStore();
 
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthProvider>
       <TestContext.Provider value={test}>
         <Routes>
           {/* Public routes */}
@@ -55,12 +54,17 @@ function App() {
             </Route>
           </Route>
           
+          {/* Admin routes */}
+          <Route path="/admin" component={AdminRoute}>
+            <Route path="/" component={AdminPage} />
+          </Route>
+          
           {/* Fallback routes */}
           <Route path="/404" component={NotFound} />
           <Route path="*" element={<Navigate href="/404" />} />
         </Routes>
       </TestContext.Provider>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine
+FROM golang:1.20-alpine
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk add --no-cache git
 
 # Copy go.mod and go.sum
-COPY go.mod go.sum* ./
+COPY go.mod go.sum ./
 
 # Download dependencies
 RUN go mod download
@@ -14,8 +14,8 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
-# Expose port
-EXPOSE 8080
+# Build the seed binary
+RUN go build -o /seed ./cmd/seed
 
-# Run the server directly
-CMD ["go", "run", "./cmd/server"] 
+# Run the seed binary
+CMD ["/seed"] 

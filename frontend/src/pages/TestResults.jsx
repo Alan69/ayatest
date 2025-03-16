@@ -1,6 +1,6 @@
-import { createSignal, createEffect, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
-import { useQuery } from 'solid-urql';
+import { createQuery } from '@urql/solid';
 import { GET_COMPLETED_TEST } from '../api/queries';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -16,14 +16,14 @@ function TestResults() {
     timeSpent: 0
   });
   
-  const [completedTestQuery] = useQuery({
+  const [testResults, testResultsState] = createQuery({
     query: GET_COMPLETED_TEST,
-    variables: { id: params.id }
+    variables: { id: params.testId },
   });
   
   createEffect(() => {
-    if (completedTestQuery.data?.completedTest) {
-      const completedTest = completedTestQuery.data.completedTest;
+    if (testResults.data?.completedTest) {
+      const completedTest = testResults.data.completedTest;
       const completedQuestions = completedTest.completedQuestions || [];
       
       const totalQuestions = completedQuestions.length;
@@ -64,7 +64,7 @@ function TestResults() {
   
   return (
     <div class="space-y-6">
-      <Show when={!completedTestQuery.fetching} fallback={<LoadingSpinner />}>
+      <Show when={!testResults.fetching} fallback={<LoadingSpinner />}>
         <div class="flex justify-between items-center">
           <h1 class="text-2xl font-bold text-gray-900">
             Test Results
@@ -80,10 +80,10 @@ function TestResults() {
         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg leading-6 font-medium text-gray-900">
-              {completedTestQuery.data?.completedTest?.product?.title}
+              {testResults.data?.completedTest?.product?.title}
             </h3>
             <p class="mt-1 max-w-2xl text-sm text-gray-500">
-              Completed on {formatDate(completedTestQuery.data?.completedTest?.completedDate)}
+              Completed on {formatDate(testResults.data?.completedTest?.completedDate)}
             </p>
           </div>
           
@@ -119,7 +119,7 @@ function TestResults() {
                 <dt class="text-sm font-medium text-gray-500">Tests Included</dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
-                    {completedTestQuery.data?.completedTest?.tests.map(test => (
+                    {testResults.data?.completedTest?.tests.map(test => (
                       <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                         <div class="w-0 flex-1 flex items-center">
                           <svg class="flex-shrink-0 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -149,7 +149,7 @@ function TestResults() {
           </div>
           <div class="border-t border-gray-200">
             <ul class="divide-y divide-gray-200">
-              {completedTestQuery.data?.completedTest?.completedQuestions.map((cq, index) => {
+              {testResults.data?.completedTest?.completedQuestions.map((cq, index) => {
                 const allCorrect = cq.selectedOptions.every(option => option.isCorrect);
                 const allSelected = cq.selectedOptions.length === cq.question.options?.filter(o => o.isCorrect).length;
                 const isCorrect = allCorrect && allSelected;

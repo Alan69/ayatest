@@ -24,7 +24,7 @@ services:
       - "8222:8222"
     command: "--jetstream --http_port 8222"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8222/healthz"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8222/healthz"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -37,7 +37,7 @@ services:
       - POSTGRES_USER=${DB_USER:-postgres}
       - POSTGRES_PWD=${DB_PASSWORD:-postgres}
       - POSTGRES_SEEDS=postgres
-      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig/development.yaml
     ports:
       - "${TEMPORAL_PORT:-7233}:7233"
     depends_on:
@@ -52,7 +52,7 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
     ports:
-      - "${TEMPORAL_UI_PORT:-8080}:8080"
+      - "${TEMPORAL_UI_PORT:-8081}:8080"
     depends_on:
       - temporal
 
@@ -69,8 +69,9 @@ services:
       - NATS_URL=nats://nats:4222
       - TEMPORAL_URL=temporal:7233
       - PORT=8080
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_change_in_production}
     ports:
-      - "${BACKEND_PORT:-8080}:8080"
+      - "${BACKEND_PORT:-8082}:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -79,7 +80,26 @@ services:
       temporal:
         condition: service_started
     volumes:
-      - ./:/app
+      - ./internal:/app
+      - go_modules:/go/pkg/mod
+
+  seed:
+    build:
+      context: ./internal
+      dockerfile: ../docker/seed.Dockerfile
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-ayatest}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    volumes:
+      - ./internal:/app
       - go_modules:/go/pkg/mod
 
   frontend:
@@ -87,7 +107,7 @@ services:
       context: ./frontend
       dockerfile: ../docker/frontend.Dockerfile
     environment:
-      - VITE_API_URL=http://localhost:${BACKEND_PORT:-8080}/query
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-8082}/query
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     volumes:

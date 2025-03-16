@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { useAuth } from '../App';
+import { useAuth } from '../hooks/useAuth';
 
 function Navbar() {
   const auth = useAuth();

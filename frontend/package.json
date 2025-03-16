@@ -15,7 +15,7 @@
     "graphql": "^16.8.1",
     "jwt-decode": "^4.0.0",
     "solid-js": "^1.8.5",
-    "solid-urql": "^0.7.3"
+    "@urql/solid": "^0.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",

@@ -31,27 +31,27 @@ type SourceInput struct {
 
 // QuestionInput is the input for creating or updating a question
 type QuestionInput struct {
-	TestID        uuid.UUID `json:"test_id"`
-	Text          *string   `json:"text"`
-	Text2         *string   `json:"text2"`
-	Text3         *string   `json:"text3"`
-	ImgPath       *string   `json:"img_path"`
-	TaskType      *int      `json:"task_type"`
-	Level         *int      `json:"level"`
-	Status        *int      `json:"status"`
-	Category      *string   `json:"category"`
-	Subcategory   *string   `json:"subcategory"`
-	Theme         *string   `json:"theme"`
-	Subtheme      *string   `json:"subtheme"`
-	Target        *string   `json:"target"`
-	Source        *string   `json:"source"`
-	SourceTextID  *uuid.UUID `json:"source_text_id"`
-	DetailID      *int      `json:"detail_id"`
-	LngID         *int      `json:"lng_id"`
-	LngTitle      *string   `json:"lng_title"`
-	SubjectID     *int      `json:"subject_id"`
-	SubjectTitle  *string   `json:"subject_title"`
-	ClassNumber   *int      `json:"class_number"`
+	TestID       uuid.UUID  `json:"test_id"`
+	Text         *string    `json:"text"`
+	Text2        *string    `json:"text2"`
+	Text3        *string    `json:"text3"`
+	ImgPath      *string    `json:"img_path"`
+	TaskType     *int       `json:"task_type"`
+	Level        *int       `json:"level"`
+	Status       *int       `json:"status"`
+	Category     *string    `json:"category"`
+	Subcategory  *string    `json:"subcategory"`
+	Theme        *string    `json:"theme"`
+	Subtheme     *string    `json:"subtheme"`
+	Target       *string    `json:"target"`
+	Source       *string    `json:"source"`
+	SourceTextID *uuid.UUID `json:"source_text_id"`
+	DetailID     *int       `json:"detail_id"`
+	LngID        *int       `json:"lng_id"`
+	LngTitle     *string    `json:"lng_title"`
+	SubjectID    *int       `json:"subject_id"`
+	SubjectTitle *string    `json:"subject_title"`
+	ClassNumber  *int       `json:"class_number"`
 }
 
 // OptionInput is the input for creating or updating an option
@@ -62,7 +62,7 @@ type OptionInput struct {
 	IsCorrect  bool      `json:"is_correct"`
 }
 
-// UserInput is the input for creating a user
+// UserInput represents input for creating a user
 type UserInput struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
@@ -78,9 +78,9 @@ type StartTestInput struct {
 
 // AnswerQuestionInput is the input for answering a question
 type AnswerQuestionInput struct {
-	CompletedTestID  uuid.UUID   `json:"completed_test_id"`
-	TestID           uuid.UUID   `json:"test_id"`
-	QuestionID       uuid.UUID   `json:"question_id"`
+	CompletedTestID   uuid.UUID   `json:"completed_test_id"`
+	TestID            uuid.UUID   `json:"test_id"`
+	QuestionID        uuid.UUID   `json:"question_id"`
 	SelectedOptionIDs []uuid.UUID `json:"selected_option_ids"`
 }
 
@@ -88,4 +88,4 @@ type AnswerQuestionInput struct {
 type CompleteTestInput struct {
 	CompletedTestID uuid.UUID `json:"completed_test_id"`
 	TimeSpent       int       `json:"time_spent"`
-} 
+}

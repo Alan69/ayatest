@@ -1,6 +1,6 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { useQuery } from 'solid-urql';
+import { createQuery } from '@urql/solid';
 import { GET_PRODUCTS } from '../api/queries';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -8,17 +8,17 @@ function Products() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = createSignal('');
   
-  const [productsQuery] = useQuery({
-    query: GET_PRODUCTS
+  const [products, productsState] = createQuery({
+    query: GET_PRODUCTS,
   });
   
   const filteredProducts = () => {
-    if (!productsQuery.data?.products) return [];
+    if (!products.data?.products) return [];
     
     const term = searchTerm().toLowerCase();
-    if (!term) return productsQuery.data.products;
+    if (!term) return products.data.products;
     
-    return productsQuery.data.products.filter(product => 
+    return products.data.products.filter(product => 
       product.title.toLowerCase().includes(term) || 
       product.description.toLowerCase().includes(term)
     );
@@ -48,7 +48,7 @@ function Products() {
         </div>
       </div>
       
-      <Show when={!productsQuery.fetching} fallback={<LoadingSpinner />}>
+      <Show when={!products.fetching} fallback={<LoadingSpinner />}>
         <Show when={filteredProducts().length > 0} fallback={
           <div class="text-center py-10">
             <p class="text-gray-500">No products found matching your search.</p>

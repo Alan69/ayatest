@@ -1,14 +1,14 @@
 import { createSignal, createEffect } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { jwtDecode } from 'jwt-decode';
-import { useMutation } from 'solid-urql';
+import { createMutation } from '@urql/solid';
 import { LOGIN, CREATE_USER } from '../api/mutations';
 import { useNavigate } from '@solidjs/router';
 
 export const createAuthStore = () => {
   const navigate = useNavigate();
-  const [loginMutation, loginMutate] = useMutation(LOGIN);
-  const [registerMutation, registerMutate] = useMutation(CREATE_USER);
+  const [loginResult, loginMutate] = createMutation(LOGIN);
+  const [registerResult, registerMutate] = createMutation(CREATE_USER);
   
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const [user, setUser] = createStore({

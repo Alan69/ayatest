@@ -1,6 +1,6 @@
-import { createSignal, createEffect, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
-import { useQuery } from 'solid-urql';
+import { createQuery } from '@urql/solid';
 import { useAuth, useTest } from '../App';
 import { GET_PRODUCT, GET_TESTS_BY_PRODUCT } from '../api/queries';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -14,9 +14,9 @@ function TestSelection() {
   const [error, setError] = createSignal('');
   const [isStarting, setIsStarting] = createSignal(false);
   
-  const [productQuery] = useQuery({
-    query: GET_PRODUCT,
-    variables: { id: params.productId }
+  const [productTests, productTestsState] = createQuery({
+    query: GET_PRODUCT_TESTS,
+    variables: { productId: params.productId },
   });
   
   const [testsQuery] = useQuery({
@@ -69,10 +69,10 @@ function TestSelection() {
   
   return (
     <div class="space-y-6">
-      <Show when={!productQuery.fetching && !testsQuery.fetching} fallback={<LoadingSpinner />}>
+      <Show when={!productTests.fetching && !testsQuery.fetching} fallback={<LoadingSpinner />}>
         <div class="flex justify-between items-center">
           <h1 class="text-2xl font-bold text-gray-900">
-            Select Tests for {productQuery.data?.product?.title}
+            Select Tests for {productTests.data?.product?.title}
           </h1>
           <button
             onClick={() => navigate('/products')}
@@ -88,22 +88,22 @@ function TestSelection() {
               Product Information
             </h3>
             <p class="mt-1 max-w-2xl text-sm text-gray-500">
-              {productQuery.data?.product?.description}
+              {productTests.data?.product?.description}
             </p>
           </div>
           <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">Time</dt>
-                <dd class="mt-1 text-sm text-gray-900">{productQuery.data?.product?.time} minutes</dd>
+                <dd class="mt-1 text-sm text-gray-900">{productTests.data?.product?.time} minutes</dd>
               </div>
               <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">Score</dt>
-                <dd class="mt-1 text-sm text-gray-900">{productQuery.data?.product?.score} points</dd>
+                <dd class="mt-1 text-sm text-gray-900">{productTests.data?.product?.score} points</dd>
               </div>
               <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">Test Limit</dt>
-                <dd class="mt-1 text-sm text-gray-900">Select 3-6 tests (max {productQuery.data?.product?.subjectLimit})</dd>
+                <dd class="mt-1 text-sm text-gray-900">Select 3-6 tests (max {productTests.data?.product?.subjectLimit})</dd>
               </div>
             </dl>
           </div>
@@ -132,7 +132,7 @@ function TestSelection() {
               Available Tests
             </h3>
             <div class="text-sm text-gray-500">
-              Selected: {test.selectedTests().length} / {productQuery.data?.product?.subjectLimit || 6}
+              Selected: {test.selectedTests().length} / {productTests.data?.product?.subjectLimit || 6}
             </div>
           </div>
           <ul class="divide-y divide-gray-200">
